@@ -1,0 +1,8 @@
+<!ENTITY project.path "Destination project directory (use / as path separator on MS-Windows)">
+<!ENTITY project.name "Project name (all lowercase)">
+<!ENTITY project.title "Title">
+<!ENTITY uuid "UUID inside curly braces">
+<!ENTITY description "Description">
+<!ENTITY author.name "Author">
+<!ENTITY author.email "Author E-Mail">
+<!ENTITY author.homepage "Home page">

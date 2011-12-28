@@ -1,0 +1,8 @@
+<!ENTITY project.path "Percorso dove creare il progetto">
+<!ENTITY project.name "Nome del progetto da creare">
+<!ENTITY project.title "Titolo descrittivo">
+<!ENTITY uuid "Valore UUID comprese graffe">
+<!ENTITY description "Descrizione">
+<!ENTITY author.name "Autore">
+<!ENTITY author.email "E-Mail Autore">
+<!ENTITY author.homepage "Home page">

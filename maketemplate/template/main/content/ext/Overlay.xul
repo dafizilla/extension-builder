@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://!TEMPL_PROJECT_NAME!/locale/!TEMPL_PROJECT_NAME!.dtd" >
+
+<overlay id="!TEMPL_PROJECT_NAME!Overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script type="application/x-javascript"
+        src="chrome://!TEMPL_PROJECT_NAME!/content/!TEMPL_PROJECT_NAME!Overlay.js" />
+
+<popup id="contentAreaContextMenu">
+  <menuitem id="!TEMPL_PROJECT_NAME!MenuItem"
+            label="&show.message.label;"
+            insertafter="context-stop" 
+            oncommand="showWelcomeMessage();"/>
+</popup>
+
+</overlay>
+   

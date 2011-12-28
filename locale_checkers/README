@@ -1,0 +1,3 @@
+check_locales.sh print all entities/properties name declared on base locale (e.g. en-US) but not present is other locale files
+
+find_untraslated_strings.sh print all entities/properties name with same string value (eg english) of base locale

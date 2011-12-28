@@ -1,0 +1,34 @@
+# This file contains the mozilla application used to run separated profiles
+
+# Directory where links will be created, generally resides in env PATH
+linkDestDir     /usr/local/bin
+
+# Directory where profiles will be created
+profileDir      ~/.moz_profiles
+
+# If true create profileDir silently, otherwise generate error
+profileDirCreateSilently    true
+
+# Application links to create
+# Lines must have the following format
+# mozapp    <<link name used to invoke profile>>  <<path to application>>
+
+# Examples
+#mozapp     ff30        /opt/devel/mozilla/ff3a8/firefox/firefox
+#mozapp     tb20        /usr/bin/thunderbird
+
+
+mozapp     ff30        /opt/devel/mozilla/ff3a8/firefox/firefox
+mozapp     ff20en      /usr/opt/mozilla/ff2.0.0.7en/firefox
+mozapp     ff20        /usr/opt/mozilla/ff2.0.0.7/firefox
+
+mozapp      tb20        /usr/bin/thunderbird
+mozapp-data tb20-data  /tmp/a
+
+#sulfur=/usr/local/sulfur/flock/flock
+#cormo=/usr/local/mozilla.org/flock-0.8.99.1/flock
+
+mozapp     song025     /opt/devel/mozilla/Songbird0.2.5/Songbird
+mozapp     song030     /opt/devel/mozilla/Songbird0.3/songbird
+
+

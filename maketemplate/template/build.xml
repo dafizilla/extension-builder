@@ -1,0 +1,97 @@
+<project name="!TEMPL_PROJECT_NAME!" default="umo">
+    <property file="extension.properties"/>
+
+    <property name="dist.dir"           value="dist"/>
+    <property name="bin.dist.dir"       value="${dist.dir}/bin"/>
+    <property name="src.dist.dir"       value="${dist.dir}/src"/>
+    <property name="tmp.dir"            value="tmp"/>
+    
+    <property name="src.dir"            value="src"/>
+    <property name="src.main.dir"       value="${src.dir}/main"/>
+    <property name="src.install.dir"    value="${src.dir}/install"/>
+    <property name="jar.name"           value="${ext.name}.jar"/>
+    <property name="dist.name"          value="${ext.name}-${version}"/>
+
+    <target name="bin-dist" depends="jar, apply-replacement" description="Build distribution XPI">
+        <mkdir dir="${bin.dist.dir}" />
+        <zip destfile="${bin.dist.dir}/${dist.name}.xpi">
+            <zipfileset dir="${tmp.dir}/${ext.name}/main" includes="${jar.name}" prefix="chrome"/>
+            <zipfileset dir="${tmp.dir}/${ext.name}/install"/>
+        </zip>
+    </target>
+
+    <target name="umo" description="Build distribution XPI for UMO (leave updateURL blank) and dafizilla">
+        <delete dir="${tmp.dir}/${ext.name}"/>
+
+        <antcall target="bin-dist"/>
+
+        <antcall target="bin-dist">
+            <param name="bin.dist.dir" value="${bin.dist.dir}/umo"/>
+            <param name="update.url" value=""/>
+        </antcall>
+    </target>
+
+    <target name="bin-dist-debug" description="Build debug XPI">
+        <mkdir dir="${bin.dist.dir}" />
+        <delete dir="${tmp.dir}/${ext.name}"/>
+        
+        <copy todir="${tmp.dir}/${ext.name}/chrome/plainfiles">
+            <fileset dir="${src.main.dir}"/>
+        </copy>
+
+        <antcall target="apply-replacement">
+            <param name="src.install.dir" value="${src.dir}/install-debug"/>
+        </antcall>
+
+        <zip destfile="${bin.dist.dir}/${dist.name}-debug.xpi">
+            <zipfileset dir="${tmp.dir}/${ext.name}/chrome"  prefix="chrome"/>
+            <zipfileset dir="${tmp.dir}/${ext.name}/install"/>
+        </zip>
+    </target>
+
+    <target name="apply-replacement">
+        <copy todir="${tmp.dir}/${ext.name}/install" overwrite="true">
+            <fileset dir="${src.install.dir}"/>
+            <filterset>
+                <filter token="VERSION"         value="${version}"/>
+                <filter token="UUID"            value="${uuid}"/>
+                <filter token="EXT_TITLE_NAME"  value="${ext.title.name}"/>
+                <filter token="EXT_NAME"        value="${ext.name}"/>
+                <filter token="UPDATE_URL"      value="${update.url}"/>
+                <filter token="DESCRIPTION"     value="${description}"/>
+                <filter token="AUTHOR"          value="${author}"/>
+                <filter token="EMAIL"           value="${email}"/>
+            </filterset>
+        </copy>    
+    </target>
+
+    <target name="src-dist">
+        <delete dir="${src.dist.dir}"/>
+        <mkdir dir="${src.dist.dir}"/>
+
+        <copy todir="${src.dist.dir}/${dist.name}">
+            <fileset dir=".">
+                <include name="build.xml"/>
+                <include name="src/**"/>
+            </fileset>
+        </copy>
+
+        <tar longfile="gnu" tarfile="${dist.dir}/${dist.name}-src.tar" basedir="${src.dist.dir}"/>
+        <gzip zipfile="${dist.dir}/${dist.name}-src.tar.gz"
+              src="${dist.dir}/${dist.name}-src.tar"/>
+
+        <delete file="${dist.dir}/${dist.name}-src.tar"/>
+    </target>
+
+    <target name="jar">
+        <mkdir dir="${tmp.dir}/${ext.name}/main"/>
+        <zip destfile="${tmp.dir}/${ext.name}/main/${jar.name}" basedir="${src.main.dir}" compress="false"/>
+    </target>
+    
+    <target name="clean" description="Clean dist and tmp" >
+        <delete dir="${dist.dir}"/>
+        <delete dir="${tmp.dir}"/>
+    </target>
+
+    <target name="rebuild" depends="clean,bin-dist" description="Clean and build dist"/>
+</project>

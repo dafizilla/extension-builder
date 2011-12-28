@@ -1,0 +1,8 @@
+<!ENTITY project.path "Cartella di destinazione del progetto (usare / come sepratore in MS-Windows)">
+<!ENTITY project.name "Nome del progetto (tutto minuscolo)">
+<!ENTITY project.title "Titolo">
+<!ENTITY uuid "Valore UUID comprese graffe">
+<!ENTITY description "Descrizione">
+<!ENTITY author.name "Autore">
+<!ENTITY author.email "E-Mail Autore">
+<!ENTITY author.homepage "Home page">

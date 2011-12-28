@@ -1,0 +1,158 @@
+<!DOCTYPE project [
+<!ENTITY % locale SYSTEM "locale-US.dtd" >
+%locale;
+]>
+
+<project name="mozilla-ext-template" basedir="." default="make-template">
+    <property name="default.filename" value="defaults.properties" />
+
+    <property file="${default.filename}" />
+
+    <target name="make-template">
+        <input message="&project.path; [${def.project.path}]"
+               addproperty="project.path"
+               defaultvalue="${def.project.path}" />
+        <input message="&project.name; [${def.project.name}]"
+               addproperty="project.name"
+               defaultvalue="${def.project.name}" />
+        <input message="&project.title; [${def.project.title}]"
+               addproperty="project.title"
+               defaultvalue="${def.project.title}" />
+        <input message="&uuid; [${def.uuid}]"
+               addproperty="uuid"
+               defaultvalue="${def.uuid}" />
+        <input message="&description; [${def.description}]"
+               addproperty="description"
+               defaultvalue="${def.description}" />
+        <input message="&author.name; [${def.author.name}]"
+               addproperty="author.name"
+               defaultvalue="${def.author.name}" />
+        <!--<input message="&author.email; [${def.author.email}]"-->
+        <!--       addproperty="author.email"-->
+        <!--       defaultvalue="${def.author.email}" />-->
+        <input message="&author.homepage; [${def.author.homepage}]"
+               addproperty="author.homepage"
+               defaultvalue="${def.author.homepage}" />
+
+        <antcall target="write-defaults" />
+        <mkdir dir="${project.path}"/>
+        <mkdir dir="${project.path}/profile"/>
+        <mkdir dir="${project.path}/src/main/content/${project.name}"/>
+        <mkdir dir="${project.path}/src/main/skin/classic/${project.name}"/>
+
+        <antcall target="make-extension-xml"/>
+        <antcall target="make-skin"/>
+        <antcall target="make-demo"/>
+        <antcall target="make-locale"/>
+
+        <!-- Create symbolic link to build.xml -->
+        <exec executable="ln">
+          <arg value="-s"/>
+          <arg value="/opt/devel/0dafiprj/srcmoz/common/ant/build.xml"/>
+          <arg value="${project.path}/build.xml"/>
+        </exec>
+
+        <!-- Create symbolic link to xsl directory -->
+        <exec executable="ln">
+          <arg value="-s"/>
+          <arg value="/opt/devel/0dafiprj/srcmoz/common/xsl/"/>
+          <arg value="${project.path}/xsl"/>
+        </exec>
+
+    </target>
+
+    <target name="write-defaults">
+        <echo file="${default.filename}" message="def.project.path=${project.path}" />
+        <echo file="${default.filename}" append="true">
+def.project.name=${project.name}</echo>
+        <echo file="${default.filename}" append="true">
+def.project.title=${project.title}</echo>
+        <echo file="${default.filename}" append="true">
+def.uuid=${uuid}</echo>
+        <echo file="${default.filename}" append="true">
+def.description=${description}</echo>
+        <echo file="${default.filename}" append="true">
+def.author.name=${author.name}</echo>
+<!--        <echo file="${default.filename}" append="true">-->
+<!--def.author.email=${author.email}</echo>-->
+        <echo file="${default.filename}" append="true">
+def.author.homepage=${author.homepage}</echo>
+    </target>
+
+    <target name="make-extension-xml">
+        <antcall target="transform-template">
+            <param name="source.file" value="template/extension.xml"/>
+            <param name="dest.file" value="${project.path}/extension.xml"/>
+        </antcall>
+
+        <antcall target="transform-template">
+            <param name="source.file" value="template/extension.properties"/>
+            <param name="dest.file" value="${project.path}/extension.properties"/>
+        </antcall>
+    </target>
+
+    <target name="make-skin">
+        <property name="dest.skin.dir"
+                  value="${project.path}/src/main/skin/classic/${project.name}" />
+
+        <antcall target="transform-template">
+            <param name="source.file" value="template/main/skin/classic/ext/contents.rdf"/>
+            <param name="dest.file" value="${dest.skin.dir}/contents.rdf"/>
+        </antcall>
+
+        <copy file="template/main/skin/classic/ext/appicon.png"
+              tofile="${dest.skin.dir}/appicon.png"
+              overwrite="true"/>
+    </target>
+
+    <target name="make-demo">
+        <antcall target="transform-template">
+            <param name="source.file" value="template/main/content/ext/Overlay.js"/>
+            <param name="dest.file" value="${project.path}/src/main/content/${project.name}/${project.name}Overlay.js"/>
+        </antcall>
+
+        <antcall target="transform-template">
+            <param name="source.file" value="template/main/content/ext/Overlay.xul"/>
+            <param name="dest.file" value="${project.path}/src/main/content/${project.name}/${project.name}Overlay.xul"/>
+        </antcall>
+    </target>
+
+    <target name="make-locale">
+        <antcall target="transform-locale">
+            <param name="locale" value="en-US" />
+        </antcall>
+
+        <antcall target="transform-locale">
+            <param name="locale" value="it-IT" />
+        </antcall>
+    </target>
+
+    <target name="transform-locale">
+        <property name="dest.locale.dir"
+                  value="${project.path}/src/main/locale/${locale}/${project.name}" />
+
+        <antcall target="transform-template">
+            <param name="source.file" value="template/main/locale/ext.properties"/>
+            <param name="dest.file" value="${dest.locale.dir}/${project.name}.properties"/>
+        </antcall>
+
+        <copy file="template/main/locale/ext.dtd"
+              tofile="${dest.locale.dir}/${project.name}.dtd"
+              overwrite="true"/>
+    </target>
+
+    <target name="transform-template">
+        <copy file="${source.file}" tofile="${dest.file}" overwrite="true"/>
+        <replace file="${dest.file}">
+            <replacefilter token="!TEMPL_UUID!" value="${uuid}"/>
+            <replacefilter token="!TEMPL_PROJECT_NAME!" value="${project.name}"/>
+            <replacefilter token="!TEMPL_PROJECT_TITLE!" value="${project.title}"/>
+            <replacefilter token="!TEMPL_DESCRIPTION!" value="${description}"/>
+            <replacefilter token="!TEMPL_AUTHOR!" value="${author.name}"/>
+            <!--<replacefilter token="!TEMPL_AUTHOR_MAIL!" value="${author.email}"/>-->
+            <replacefilter token="!TEMPL_AUTHOR_HOME_PAGE!" value="${author.homepage}"/>
+            <replacefilter token="!TEMPL_LOCALE!" value="${locale}"/>
+        </replace>
+    </target>
+
+</project>
